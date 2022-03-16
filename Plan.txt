@@ -1,0 +1,44 @@
+Guesser:
+    Response:
+        Green means correctly placed
+        Yellow means misplaced
+        Black means not in Correct Word
+
+    possible candidates for Correct word:
+        Intersection of of all the words such that:
+            Green letter is in same position as the candidates
+            don't contain black letter
+            contain yellow words but not in exact same position of each yellow word
+
+    We want to minimize the possible candidate of words after each guess. 
+    (Greedy strategy).
+
+    To apply this greedy strategy:
+        say we have a word (like "BRAKE") then we'll iterate over all the possible permutations ans combinations of response (like "bbybb").
+
+        Now there are 3^5 = 243 permutations and combinations and there are about 13000
+        candidates. 
+
+        So we'll iterate over all the words and give a relative score to the candidates
+        on the basis of which choice of candidate is minimizing the candidates for 
+        the future on the considering all the permutations of response.
+        and take average score over all the permutaions.
+
+            Probability_of_permutaion[i] 
+            -> Probability such that permutaion i of response will occur
+                           = total candidates left after selection of ith 
+                             permutaion/Total words
+
+            Score_permutaion[i] = Probability[i] * log2(1/Probability[i])
+
+            prob_of_occurance[word] = freq of word/(Total 5 letter words)
+
+            average_score[word] = sum of scores_permutaion[i] for all possibilitles of i 
+
+            Now, We'll use sigmoid smoothening on the basis of frequency to say whether a word exist or not.
+
+        Average Score[i] = (Sum of all score[i][j] for all possiblietes of j) / (3^5)
+
+
+
+    Now, sort these candidates on the basis of usage in english language (Google Ngram dataset). 
