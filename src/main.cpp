@@ -212,6 +212,7 @@ map<string, long double> ScoreOfWords(vector<string> candidates, map<char, array
     long double cur_score = 1.0;
     for (int i = 0; i < 5; ++i) {
       char letter = word[i];
+      // Less score means better
       cur_score = (cur_score * (1 + 1.0 * (freq[letter][i] - max_freq[i])) * (freq[letter][i] - max_freq[i]));
     }
     word_score.insert({word, cur_score});
