@@ -10,28 +10,28 @@
 using namespace std;
 
 void init1(vector<string> &candidates) {
-  ifstream in("../data/all_words.txt");
+  ifstream fin1("../data/all_words.txt");
 
   string word;
-  while (in >> word) {
+  while (fin1 >> word) {
     candidates.push_back(word);
   }
 }
 
 void init2(vector<string> &wordle_words) {
-  ifstream in("../data/wordle_words.txt");
+  ifstream fin2("../data/wordle_words.txt");
   string word;
-  while (in >> word) {
+  while (fin2 >> word) {
     wordle_words.push_back(word);
   }
 }
 
 void init3(map<string, int64_t> &freq_map) {
-  ifstream in("../data/words_freq.txt");
+  ifstream fin3("../data/words_freq.txt");
   string s, word;
   long double freq=0;
   int parity=1;
-  while (cin >> s) {
+  while (fin3 >> s) {
     if (parity % 2 == 1) {
       word = s;
     } else {
