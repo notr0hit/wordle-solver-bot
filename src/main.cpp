@@ -1,20 +1,43 @@
 #include <algorithm>
 #include <array>
 #include <cmath>
+#include <fstream>
 #include <iostream>
 #include <map>
 #include <string>
 #include <vector>
-#include <fstream>
 
 using namespace std;
 
-void init(vector<string> &candidates) {
+void init1(vector<string> &candidates) {
   ifstream in("../data/all_words.txt");
-  
+
   string word;
   while (in >> word) {
     candidates.push_back(word);
+  }
+}
+
+void init2(vector<string> &wordle_words) {
+  ifstream in("../data/wordle_words.txt");
+  string word;
+  while (in >> word) {
+    wordle_words.push_back(word);
+  }
+}
+
+void init3(map<string, int64_t> &freq_map) {
+  ifstream in("../data/words_freq.txt");
+  string s, word;
+  long double freq=0;
+  int parity=1;
+  while (cin >> s) {
+    if (parity % 2 == 1) {
+      word = s;
+    } else {
+      freq = stoll(s);
+      freq_map.insert({word, freq});
+    }
   }
 }
 
@@ -36,9 +59,9 @@ bool isPresent(const char &c, const vector<char> &v) {
 
 bool isValidWord(string s) {
   if (s.size() != 5) return false;
-  for (char &c: s) {
+  for (char &c : s) {
     c = tolower(c);
-    if (c<'a' || c>'z') return false;  
+    if (c < 'a' || c > 'z') return false;
   }
 
   return true;
@@ -46,9 +69,9 @@ bool isValidWord(string s) {
 
 bool isValidResponse(string s) {
   if (s.size() != 5) return false;
-  for (char &c: s) {
+  for (char &c : s) {
     c = tolower(c);
-    if (c != 'g' && c != 'y' && c != 'b') return false;  
+    if (c != 'g' && c != 'y' && c != 'b') return false;
   }
 
   return true;
@@ -161,7 +184,6 @@ vector<string> FilterWords(string response, string guess, vector<string> candida
 }
 
 map<char, array<int, 5>> LetterFrequency(vector<string> candidates) {
-  
   map<char, array<int, 5>> freq;
 
   for (char alph = 'a'; alph <= 'z'; ++alph) {
@@ -214,16 +236,15 @@ string BestWord(vector<string> candidates, map<char, array<int, 5>> freq) {
 }
 
 void Solver(vector<string> candidates) {
-
   int counter = 1;
-  
-  for (string num: {"1st", "2nd", "3rd", "4th", "5th", "6th"}) {
-    
-    cout << "The " << num << " suggested Word : " <<
-    BestWord(candidates, LetterFrequency(candidates)) << "\n";
+
+  for (string num : {"1st", "2nd", "3rd", "4th", "5th", "6th"}) {
+    cout << "\n";
+
+    cout << "The " << num << " suggested Word : " << BestWord(candidates, LetterFrequency(candidates)) << "\n";
     string guess;
     string response;
-    
+
     cout << "Enter your " << num << " guess : ";
     cin >> guess;
 
@@ -233,7 +254,7 @@ void Solver(vector<string> candidates) {
     }
 
     cout << "Enter your response ";
-    if (num =="1st") {
+    if (num == "1st") {
       cout << "(eg. GGBYB) : ";
     } else {
       cout << ": ";
@@ -246,29 +267,30 @@ void Solver(vector<string> candidates) {
     }
 
     candidates = FilterWords(response, guess, candidates);
-    
+
     if (candidates.size() == 0) {
       cout << "No words left!!!\n";
       return;
     }
 
     if (response == "ggggg") {
-      cout << "Congrats, we found the word in " << num << " try!\n";
+      cout << "Congrats, we found the word in " << counter << " try!\n";
       return;
     }
 
-    string best_word = BestWord(candidates, LetterFrequency(candidates));
-
-    cout << "Suggested Word is : " << best_word << "\n";
+    counter++;
   }
 
   if (counter > 6) {
     cout << "We could not find the word! :(\n";
   }
 }
-int  main() {
-  vector<string> candidates;
-  init(candidates);
-  // for (string s: candidates) cout << s << "\n";
+int main() {
+  vector<string> candidates, wordle_words;
+  map<string, int64_t> freq_map;
+  init1(candidates);
+  init2(wordle_words);
+  init3(freq_map);
+
   Solver(candidates);
 }
