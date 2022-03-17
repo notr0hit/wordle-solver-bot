@@ -59,7 +59,7 @@ bool isPresent(const char &c, const vector<char> &v) {
   return flag;
 }
 
-bool isValidWord(string s) {
+bool isValidWord(string &s) {
   if (s.size() != 5) return false;
   for (char &c : s) {
     c = tolower(c);
@@ -69,7 +69,7 @@ bool isValidWord(string s) {
   return true;
 }
 
-bool isValidResponse(string s) {
+bool isValidResponse(string &s) {
   if (s.size() != 5) return false;
   for (char &c : s) {
     c = tolower(c);
