@@ -6,8 +6,10 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <set>
 
 using namespace std;
+set<string> guessed_words; 
 
 void init1(vector<string> &candidates) {
   ifstream fin1("../data/all_words.txt");
@@ -227,7 +229,7 @@ string BestWord(vector<string> candidates, map<char, array<int, 5>> freq) {
   auto word_scores = ScoreOfWords(candidates, freq);
 
   for (string &word : candidates) {
-    if (word_scores[word] < max_score) {
+    if (guessed_words.count(word) == 0 &&  word_scores[word] < max_score) {
       max_score = word_scores[word];
       best_word = word;
     }
@@ -238,7 +240,6 @@ string BestWord(vector<string> candidates, map<char, array<int, 5>> freq) {
 
 void Solver(vector<string> candidates) {
   int counter = 1;
-
   for (string num : {"1st", "2nd", "3rd", "4th", "5th", "6th"}) {
     cout << "\n";
 
@@ -253,7 +254,7 @@ void Solver(vector<string> candidates) {
       cout << "Please Enter correct guess : ";
       cin >> guess;
     }
-
+    guessed_words.insert(guess);
     cout << "Enter your response ";
     if (num == "1st") {
       cout << "(eg. GGBYB) : ";
@@ -293,5 +294,5 @@ int main() {
   init2(wordle_words);
   init3(freq_map);
 
-  Solver(candidates);
+  Solver(wordle_words);
 }
