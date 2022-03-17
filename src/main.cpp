@@ -279,7 +279,6 @@ void Solver(vector<string> candidates) {
       cout << "Congrats, we found the word in " << counter << " try!\n";
       return;
     }
-
     counter++;
   }
 
