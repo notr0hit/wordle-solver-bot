@@ -182,6 +182,13 @@ vector<string> FilterWords(string response, string guess, vector<string> candida
     if (flag) possibleCandidates.push_back(word);
   }
 
+  // Printing all possible candidates
+  for (string &x : possibleCandidates) {
+    cout << x;
+    if (x == possibleCandidates.back()) cout << "\n";
+    else cout << ", ";
+  };
+
   return possibleCandidates;
 }
 
@@ -271,19 +278,19 @@ void Solver(vector<string> candidates) {
     candidates = FilterWords(response, guess, candidates);
 
     if (candidates.size() == 0) {
-      cout << "No words left!!!\n";
+      cout << "\nNo words left!!!\n";
       return;
     }
 
     if (response == "ggggg") {
-      cout << "Congrats, we found the word in " << counter << " try!\n";
+      cout << "\nCongrats, We found the word in " << counter << " try! :)\n";
       return;
     }
     counter++;
   }
 
   if (counter > 6) {
-    cout << "We could not find the word! :(\n";
+    cout << "\nWe could not find the word! :(\n";
   }
 }
 int main() {
@@ -293,5 +300,5 @@ int main() {
   init2(wordle_words);
   init3(freq_map);
 
-  Solver(wordle_words);
+  Solver(candidates);
 }
