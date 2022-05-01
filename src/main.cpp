@@ -10,8 +10,12 @@
 
 using namespace std;
 set<string> guessed_words; 
+map<string, long double> freq_map;
 
-void init1(vector<string> &candidates) {
+map<char, array<int, 5>> LetterFrequency(vector<string> candidates);
+map<string, long double> ScoreOfWords(vector<string> candidates, map<char, array<int, 5>> freq);
+
+void InitCandidates(vector<string> &candidates) {
   ifstream fin1("../data/all_words.txt");
 
   string word;
@@ -20,26 +24,19 @@ void init1(vector<string> &candidates) {
   }
 }
 
-void init2(vector<string> &wordle_words) {
-  ifstream fin2("../data/wordle_words.txt");
-  string word;
-  while (fin2 >> word) {
-    wordle_words.push_back(word);
-  }
-}
-
-void init3(map<string, int64_t> &freq_map) {
+void InitFrequency() {
   ifstream fin3("../data/words_freq.txt");
   string s, word;
   long double freq=0;
-  int parity=1;
+  int parity=0;
   while (fin3 >> s) {
-    if (parity % 2 == 1) {
+    if (parity % 2 == 0) {
       word = s;
     } else {
-      freq = stoll(s);
+      freq = stold(s);
       freq_map.insert({word, freq});
     }
+    parity++;
   }
 }
 
@@ -182,11 +179,18 @@ vector<string> FilterWords(string response, string guess, vector<string> candida
     if (flag) possibleCandidates.push_back(word);
   }
 
+  auto freq = LetterFrequency(possibleCandidates);
+  auto word_scores =  ScoreOfWords(possibleCandidates, freq);
+
+  // Sorting possible candidates
+  sort(possibleCandidates.begin(), possibleCandidates.end(), [&](string a, string b){
+    return word_scores[a] < word_scores[b];
+  });
+
   // Printing all possible candidates
-  for (string &x : possibleCandidates) {
-    cout << x;
-    if (x == possibleCandidates.back()) cout << "\n";
-    else cout << ", ";
+  cout << "\n Possible Words:\n";
+  for (int i=0; i< min(5, (int)possibleCandidates.size()); i++) {
+    cout << (i+1) << ". " << possibleCandidates[i] << "\n";
   };
 
   return possibleCandidates;
@@ -224,6 +228,8 @@ map<string, long double> ScoreOfWords(vector<string> candidates, map<char, array
       // Less score means better
       cur_score = (cur_score * (1 + 1.0 * (freq[letter][i] - max_freq[i])) * (freq[letter][i] - max_freq[i]));
     }
+
+    cur_score /= (freq_map[word]);
     word_score.insert({word, cur_score});
   }
 
@@ -241,8 +247,8 @@ string BestWord(vector<string> candidates, map<char, array<int, 5>> freq) {
       best_word = word;
     }
   }
-
-  return best_word;
+  if (guessed_words.size() == 0) return "score"; // First word is score
+  else return best_word; // remaining words
 }
 
 void Solver(vector<string> candidates) {
@@ -294,11 +300,9 @@ void Solver(vector<string> candidates) {
   }
 }
 int main() {
-  vector<string> candidates, wordle_words;
-  map<string, int64_t> freq_map;
-  init1(candidates);
-  init2(wordle_words);
-  init3(freq_map);
+  vector<string> candidates;
+  InitCandidates(candidates);
+  InitFrequency();
 
   Solver(candidates);
 }
